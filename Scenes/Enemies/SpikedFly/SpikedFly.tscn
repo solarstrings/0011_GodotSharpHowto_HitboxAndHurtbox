@@ -1,0 +1,110 @@
+[gd_scene load_steps=25 format=2]
+
+[ext_resource path="res://Scenes/Enemies/SpikedFly/Gfx/Fly/skeleton-fly_07.png" type="Texture" id=1]
+[ext_resource path="res://Scenes/Enemies/SpikedFly/Gfx/Fly/skeleton-fly_06.png" type="Texture" id=2]
+[ext_resource path="res://Scenes/Enemies/SpikedFly/Gfx/Fly/skeleton-fly_01.png" type="Texture" id=3]
+[ext_resource path="res://Scenes/Enemies/SpikedFly/Gfx/Fly/skeleton-fly_10.png" type="Texture" id=4]
+[ext_resource path="res://Scenes/Enemies/SpikedFly/Gfx/Fly/skeleton-fly_08.png" type="Texture" id=5]
+[ext_resource path="res://Scenes/Enemies/SpikedFly/Gfx/Fly/skeleton-fly_09.png" type="Texture" id=6]
+[ext_resource path="res://Scenes/Enemies/SpikedFly/Gfx/Fly/skeleton-fly_05.png" type="Texture" id=7]
+[ext_resource path="res://Scenes/Enemies/SpikedFly/Gfx/Fly/skeleton-fly_03.png" type="Texture" id=8]
+[ext_resource path="res://Scenes/Enemies/SpikedFly/Gfx/Fly/skeleton-fly_02.png" type="Texture" id=9]
+[ext_resource path="res://Scenes/Enemies/SpikedFly/Gfx/Fly/skeleton-fly_00.png" type="Texture" id=10]
+[ext_resource path="res://Scenes/Enemies/SpikedFly/Gfx/Fly/skeleton-fly_04.png" type="Texture" id=11]
+[ext_resource path="res://Scenes/Enemies/SpikedFly/SpikedFly.cs" type="Script" id=12]
+[ext_resource path="res://Scenes/Shared/Hurtbox/Hurtbox.cs" type="Script" id=13]
+[ext_resource path="res://Assets/CloudDissolve/CloudDissolveEffect.png" type="Texture" id=14]
+
+[sub_resource type="CircleShape2D" id=1]
+
+[sub_resource type="AtlasTexture" id=4]
+flags = 4
+atlas = ExtResource( 14 )
+region = Rect2( 0, 0, 64, 49 )
+
+[sub_resource type="AtlasTexture" id=5]
+flags = 4
+atlas = ExtResource( 14 )
+region = Rect2( 64, 0, 64, 49 )
+
+[sub_resource type="AtlasTexture" id=6]
+flags = 4
+atlas = ExtResource( 14 )
+region = Rect2( 128, 0, 64, 49 )
+
+[sub_resource type="AtlasTexture" id=7]
+flags = 4
+atlas = ExtResource( 14 )
+region = Rect2( 192, 0, 64, 49 )
+
+[sub_resource type="AtlasTexture" id=8]
+flags = 4
+atlas = ExtResource( 14 )
+region = Rect2( 256, 0, 64, 49 )
+
+[sub_resource type="AtlasTexture" id=9]
+flags = 4
+atlas = ExtResource( 14 )
+region = Rect2( 256, 0, 64, 49 )
+
+[sub_resource type="SpriteFrames" id=10]
+animations = [ {
+"frames": [ SubResource( 4 ), SubResource( 5 ), SubResource( 6 ), SubResource( 7 ), SubResource( 8 ), SubResource( 9 ) ],
+"loop": false,
+"name": "Dissolve",
+"speed": 15.0
+} ]
+
+[sub_resource type="SpriteFrames" id=2]
+animations = [ {
+"frames": [ ExtResource( 10 ), ExtResource( 3 ), ExtResource( 9 ), ExtResource( 8 ), ExtResource( 11 ), ExtResource( 7 ), ExtResource( 2 ), ExtResource( 1 ), ExtResource( 5 ), ExtResource( 6 ), ExtResource( 4 ) ],
+"loop": true,
+"name": "Fly",
+"speed": 22.0
+} ]
+
+[sub_resource type="CircleShape2D" id=3]
+
+[node name="SpikedFly" type="KinematicBody2D"]
+script = ExtResource( 12 )
+Health = 5.0
+SpikedFlySpeed = 350.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 1 )
+
+[node name="CloudDeathEffect" type="AnimatedSprite" parent="."]
+visible = false
+scale = Vector2( 5, 5 )
+frames = SubResource( 10 )
+animation = "Dissolve"
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+scale = Vector2( 0.5, 0.5 )
+frames = SubResource( 2 )
+animation = "Fly"
+frame = 6
+
+[node name="HealthPoints" type="Sprite" parent="."]
+position = Vector2( -75, -131 )
+scale = Vector2( 3, 3 )
+
+[node name="HealthLabel" type="Label" parent="HealthPoints"]
+modulate = Color( 0, 0, 0, 1 )
+margin_right = 40.0
+margin_bottom = 14.0
+text = "HP: 10"
+
+[node name="TakeDamageTimer" type="Timer" parent="."]
+wait_time = 0.15
+one_shot = true
+
+[node name="Hurtbox" type="Area2D" parent="."]
+script = ExtResource( 13 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2( -14, 8 )
+scale = Vector2( 9, 9 )
+shape = SubResource( 3 )
+
+[connection signal="timeout" from="TakeDamageTimer" to="." method="OnTakeDamageTimerTimeout"]
